@@ -5,6 +5,8 @@ import AllLoans from "../components/pages/Loans/AllLoans";
 import Login from "../components/pages/Auth/Login";
 import Register from "../components/pages/Auth/Register";
 import AuthLayout from "../layouts/AuthLayout";
+import PrivetRoute from "./PrivetRoute";
+import DashboardLayout from "../layouts/DashboardLayout";
 
 export const router = createBrowserRouter([
     {
@@ -31,5 +33,9 @@ export const router = createBrowserRouter([
 
         ]
     },
+    {
+        path: "/dashboard",
+        element: <PrivetRoute><DashboardLayout></DashboardLayout></PrivetRoute>
+    }
    
 ]);

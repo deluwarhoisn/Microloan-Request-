@@ -1,8 +1,18 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router';
 import logo from '../../assets/images.png'
+import useAuth from '../../hooks/useAuth';
 
 const Navbar = () => {
+  const {user,logOut} = useAuth();
+
+  const handleLogOut = () =>{
+    logOut()
+    .then()
+    .catch(error => {
+      console.log(error);
+    })
+  }
     
     
     const links = <>
@@ -10,6 +20,7 @@ const Navbar = () => {
         <li><NavLink to="all-loans">All-Loans</NavLink></li>
         <li><NavLink to="about">About Us</NavLink></li>
         <li><NavLink to="">Contact</NavLink></li>
+        <li><NavLink to="dashboard">Dashboard</NavLink></li>
        
 
         
@@ -51,7 +62,7 @@ const Navbar = () => {
 
   {/* Navbar End: Buttons + Theme Toggle */}
   <div className="navbar-end flex items-center gap-3">
-    <Link to="login" className="btn btn-outline btn-sm">Login</Link>
+  {user ?   <Link onClick={handleLogOut} to="login" className="btn btn-outline btn-sm">Log Out</Link> :   <Link to="login" className="btn btn-outline btn-sm">Login</Link>}
     <Link to="register" className="btn btn-primary btn-sm">Register</Link>
     <button className="btn btn-ghost btn-sm">🌙</button> {/* Theme toggle */}
   </div>
