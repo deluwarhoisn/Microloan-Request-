@@ -1,11 +1,8 @@
-import React from 'react';
+
+import { Link } from "react-router";
 
 const LoanCard = () => {
-    return (
-        <div>
-            
-        </div>
-    );
+  return <div></div>
 };
 
 export default LoanCard;

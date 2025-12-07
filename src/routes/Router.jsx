@@ -7,6 +7,8 @@ import Register from "../components/pages/Auth/Register";
 import AuthLayout from "../layouts/AuthLayout";
 import PrivetRoute from "./PrivetRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
+import Loans from "../api/Loans";
+import PaymentDetailsModal from "../components/Modals/PaymentDetailsModal";
 
 export const router = createBrowserRouter([
     {
@@ -22,7 +24,7 @@ export const router = createBrowserRouter([
                 Component: AllLoans
             },
 
- {
+            {
                 path: "/login",
                 Component: Login
             },
@@ -35,7 +37,14 @@ export const router = createBrowserRouter([
     },
     {
         path: "/dashboard",
-        element: <PrivetRoute><DashboardLayout></DashboardLayout></PrivetRoute>
-    }
-   
+        element: <PrivetRoute><DashboardLayout></DashboardLayout></PrivetRoute>,
+      
+    },
+
+    {
+        path: "/loans",
+        Component: AllLoans
+    },
+
+
 ]);

@@ -19,10 +19,14 @@ const Login = () => {
             .then((result) => {
                 console.log( result.user);
                 navigate(location?.state || '/')
+                
             })
+            
             .catch((error) => {
                 console.error('Error logging in:', error);
+                
             });
+            
     }
 
     return (

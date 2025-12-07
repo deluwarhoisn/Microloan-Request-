@@ -1,9 +1,10 @@
 ;
 import { useForm } from 'react-hook-form';
-import { Link, useLocation, useNavigate,} from 'react-router';
+import { Link, useLocation, useNavigate, } from 'react-router';
 import useAuth from '../../../hooks/useAuth';
 import SocialLogin from './SocialLogin';
 import { updateProfile } from 'firebase/auth';
+import Swal from 'sweetalert2';
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -15,6 +16,7 @@ const Register = () => {
     registerUser(data.email, data.password)
       .then(async (result) => {
         const loggedUser = result.user;
+      
 
         // Update profile
         await updateProfile(loggedUser, {
@@ -28,6 +30,13 @@ const Register = () => {
         navigate(location?.state ? location.state : "/");
       })
       .catch((error) => console.log(error));
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your work has been saved",
+          showConfirmButton: false,
+          timer: 1500
+        });
   };
 
   return (
