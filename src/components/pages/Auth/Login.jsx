@@ -4,6 +4,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { Link, useLocation, useNavigate } from 'react-router';
 import useAuth from '../../../hooks/useAuth';
 import SocialLogin from './SocialLogin';
+import Swal from 'sweetalert2';
 
 const Login = () => {
 
@@ -24,7 +25,13 @@ const Login = () => {
             
             .catch((error) => {
                 console.error('Error logging in:', error);
-                
+                 Swal.fire({
+                          position: "top-end",
+                          icon: "success",
+                          title: "Login successful",
+                          showConfirmButton: false,
+                          timer: 1500
+                        });
             });
             
     }

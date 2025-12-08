@@ -5,9 +5,11 @@ import useAuth from '../../hooks/useAuth';
 
 
 
+
 const Navbar = () => {
 
   const { user, logOut } = useAuth();
+ <div>{user}</div>
 
   const handleLogOut = () => {
     logOut()
