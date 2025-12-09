@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { motion } from "motion/react"
+import { motion } from "framer-motion";
 
 const Home = () => {
   const [loans, setLoans] = useState([]);
@@ -77,78 +77,6 @@ const Home = () => {
           ))}
         </motion.div>
       )}
-
-      {/* HOW IT WORKS */}
-      <div className="py-20">
-        <h2 className="text-3xl font-bold text-center mb-10">How It Works</h2>
-
-        <div className="grid md:grid-cols-3 gap-10 text-center">
-          {["Apply Online", "Verify Documents", "Get Approved"].map((step, i) => (
-            <motion.div 
-              key={i} 
-              className="p-6 border rounded-lg shadow-md"
-              initial={{ opacity: 0, y: 30 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ delay: i * 0.2 }}
-            >
-              <h3 className="text-xl font-semibold">{step}</h3>
-              <p className="text-gray-500 mt-2">
-                Simple and fast process with complete transparency.
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* CUSTOMER FEEDBACK */}
-      <div className="py-20">
-        <h2 className="text-3xl font-bold text-center mb-10">What Customers Say</h2>
-
-        <motion.div 
-          className="bg-gray-100 p-10 rounded-xl text-center max-w-2xl mx-auto"
-          initial={{ opacity: 0 }} 
-          animate={{ opacity: 1 }} 
-          transition={{ duration: 0.5 }}
-        >
-          <p className="text-lg italic">
-            "Amazing experience! Got my loan approved within 24 hours."
-          </p>
-          <p className="mt-4 font-semibold">— Rahim, Business Loan</p>
-        </motion.div>
-      </div>
-
-      {/* EXTRA SECTION 1: WHY CHOOSE US */}
-      <section className="py-20 bg-blue-50 rounded-xl">
-        <h2 className="text-3xl font-bold text-center mb-10">Why Choose Us?</h2>
-
-        <div className="grid md:grid-cols-3 gap-10 text-center">
-          {["Low Interest Rates", "Fast Approval", "Secure Process"].map((item, index) => (
-            <div key={index} className="p-6">
-              <h3 className="text-xl font-semibold">{item}</h3>
-              <p className="text-gray-500 mt-2">
-                Trusted by thousands of users every month.
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* EXTRA SECTION 2: FAQ */}
-      <section className="py-20">
-        <h2 className="text-3xl font-bold text-center mb-10">Frequently Asked Questions</h2>
-
-        <div className="space-y-5 max-w-3xl mx-auto">
-          <div className="border p-5 rounded-lg">
-            <h4 className="font-semibold">How long does approval take?</h4>
-            <p className="text-gray-500">Most requests get approval within 24–48 hours.</p>
-          </div>
-
-          <div className="border p-5 rounded-lg">
-            <h4 className="font-semibold">Do I need collateral?</h4>
-            <p className="text-gray-500">Some loans require it, some don’t — depends on category.</p>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

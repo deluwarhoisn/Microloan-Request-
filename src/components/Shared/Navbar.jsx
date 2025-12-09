@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router';
-import logo from '../../assets/images.png'
+
 import useAuth from '../../hooks/useAuth';
+import Logo from './Logo';
 
 
 
@@ -9,7 +10,7 @@ import useAuth from '../../hooks/useAuth';
 const Navbar = () => {
 
   const { user, logOut } = useAuth();
- <div>{user}</div>
+ 
 
   const handleLogOut = () => {
     logOut()
@@ -25,6 +26,7 @@ const Navbar = () => {
     <li><NavLink to="loans">All-Loans</NavLink></li>
     <li><NavLink to="about">About Us</NavLink></li>
     <li><NavLink to="contact">Contact</NavLink></li>
+    <li><NavLink to="loan-form">Loan Form</NavLink></li>
     <li><NavLink to="dashboard">Dashboard</NavLink></li>
 
 
@@ -54,8 +56,7 @@ const Navbar = () => {
           </div>
 
           {/* Logo */}
-          <img className="w-10 h-10" src={logo} alt="Logo" />
-          <p className="font-bold text-2xl text-primary">Microloan</p>
+          <Logo></Logo>
         </div>
 
         {/* Navbar Center: Desktop Menu */}
