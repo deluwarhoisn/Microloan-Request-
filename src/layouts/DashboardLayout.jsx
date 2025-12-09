@@ -30,6 +30,8 @@ const DashboardLayout = () => {
             <Link to="/dashboard" className="block px-3 py-2 rounded hover:bg-gray-700">Overview</Link>
             <Link to="/loans" className="block px-3 py-2 rounded hover:bg-gray-700">Loans</Link>
             <Link to="/dashboard/loan-applications" className="block px-3 py-2 rounded hover:bg-gray-700"> Loan Applications</Link>
+            <Link to="/dashboard/manage-users" className="block px-3 py-2 rounded hover:bg-gray-700"> Manage Users</Link>
+            <Link to="/dashboard/add-loan" className="block px-3 py-2 rounded hover:bg-gray-700"> Add Loan</Link>
           </nav>
         </aside>
 

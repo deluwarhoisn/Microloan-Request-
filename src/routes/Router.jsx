@@ -10,6 +10,8 @@ import PrivetRoute from "./PrivetRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
 import LoanApplication from "../components/pages/dashboard/Admin/LoanForm";
 import LoanApplications from "../components/pages/dashboard/Admin/LoanApplications";
+import ManageUsers from "../components/pages/dashboard/Admin/ManageUsers";
+import AddLoan from "../components/pages/dashboard/Manager/AddLoan";
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +45,14 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/loan-applications",
         element: <PrivetRoute><LoanApplications></LoanApplications></PrivetRoute>
+      },
+      {
+        path: "/dashboard/Manage-Users",
+        element: <PrivetRoute><ManageUsers></ManageUsers></PrivetRoute>
+      },
+      {
+        path: "/dashboard/add-Loan",
+        element: <PrivetRoute><AddLoan></AddLoan></PrivetRoute>
       }
     ],
   },
@@ -53,6 +63,7 @@ export const router = createBrowserRouter([
         <DashboardLayout />
       </PrivetRoute>
     ),
+   
   },
   
 ]);
