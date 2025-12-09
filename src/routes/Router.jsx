@@ -12,6 +12,7 @@ import LoanApplication from "../components/pages/dashboard/Admin/LoanForm";
 import LoanApplications from "../components/pages/dashboard/Admin/LoanApplications";
 import ManageUsers from "../components/pages/dashboard/Admin/ManageUsers";
 import AddLoan from "../components/pages/dashboard/Manager/AddLoan";
+import LoadingSpinner from "../components/Shared/LoadingSpinner";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
       {
         path: "/loan-form",
         Component: LoanApplication,
+      },
+      {
+     path: "/*",
+     Component: LoadingSpinner,
       },
       {
         path: "/dashboard/loan-applications",
