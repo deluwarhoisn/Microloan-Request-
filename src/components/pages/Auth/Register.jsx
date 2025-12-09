@@ -1,10 +1,10 @@
-;
 import { useForm } from 'react-hook-form';
-import { Link, useLocation, useNavigate, } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import useAuth from '../../../hooks/useAuth';
 import SocialLogin from './SocialLogin';
 import { updateProfile } from 'firebase/auth';
 import Swal from 'sweetalert2';
+import { useState } from 'react';
 
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -12,11 +12,15 @@ const Register = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleRegistration = (data) => {
+  const [loading, setLoading] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+
+  const handleRegistration = async (data) => {
+    setLoading(true);
+
     registerUser(data.email, data.password)
       .then(async (result) => {
         const loggedUser = result.user;
-      
 
         // Update profile
         await updateProfile(loggedUser, {
@@ -24,12 +28,23 @@ const Register = () => {
           photoURL: data.photo,
         });
 
-        console.log("User Created:", loggedUser);
+        // Save user role in database
+        const userInfo = {
+          name: data.name,
+          email: data.email,
+          role: data.role,
+          photo: data.photo,
+        };
 
-        // Redirect after registration
-        navigate(location?.state ? location.state : "/");
-      })
-      .catch((error) => console.log(error));
+        fetch(`http://localhost:5000/users`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(userInfo),
+        });
+
+        // Success alert
         Swal.fire({
           position: "top-end",
           icon: "success",
@@ -37,6 +52,20 @@ const Register = () => {
           showConfirmButton: false,
           timer: 1500
         });
+
+        setLoading(false);
+
+        // Redirect
+        navigate(location?.state ? location.state : "/");
+      })
+      .catch((error) => {
+        setLoading(false);
+        Swal.fire({
+          icon: "error",
+          title: "Registration Failed",
+          text: error.message,
+        });
+      });
   };
 
   return (
@@ -58,7 +87,7 @@ const Register = () => {
               type="text"
               {...register("name", { required: true })}
               placeholder="Enter your name"
-              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 mt-2 border rounded-lg focus:ring-green-500"
             />
             {errors.name && <span className="text-red-600">Name is required</span>}
           </div>
@@ -70,7 +99,7 @@ const Register = () => {
               type="email"
               {...register("email", { required: true })}
               placeholder="Enter your email"
-              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 mt-2 border rounded-lg focus:ring-green-500"
             />
             {errors.email && <span className="text-red-600">Email is required</span>}
           </div>
@@ -82,7 +111,7 @@ const Register = () => {
               type="url"
               {...register("photo", { required: true })}
               placeholder="Enter your photo URL"
-              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 mt-2 border rounded-lg focus:ring-green-500"
             />
             {errors.photo && <span className="text-red-600">Photo URL required</span>}
           </div>
@@ -92,7 +121,7 @@ const Register = () => {
             <label className="block text-gray-700">Role</label>
             <select
               {...register("role", { required: true })}
-              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 mt-2 border rounded-lg focus:ring-green-500"
             >
               <option value="borrower">Borrower</option>
               <option value="manager">Manager</option>
@@ -103,16 +132,25 @@ const Register = () => {
           {/* Password */}
           <div>
             <label className="block text-gray-700">Password</label>
-            <input
-              type="password"
-              {...register("password", {
-                required: true,
-                minLength: 6,
-                pattern: /^(?=.*[a-z])(?=.*[A-Z]).+$/,
-              })}
-              placeholder="Enter your password"
-              className="w-full px-4 py-2 mt-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-            />
+            <div className="relative">
+              <input
+                type={showPass ? "text" : "password"}
+                {...register("password", {
+                  required: true,
+                  minLength: 6,
+                  pattern: /^(?=.*[a-z])(?=.*[A-Z]).+$/,
+                })}
+                placeholder="Enter your password"
+                className="w-full px-4 py-2 mt-2 border rounded-lg focus:ring-green-500"
+              />
+              <span
+                onClick={() => setShowPass(!showPass)}
+                className="absolute right-3 top-3 cursor-pointer text-gray-500"
+              >
+                {showPass ? "🙈" : "👁️"}
+              </span>
+            </div>
+
             {errors.password && (
               <span className="text-red-600">
                 Password must be at least 6 characters and include upper & lower case
@@ -122,10 +160,11 @@ const Register = () => {
 
           {/* Register Button */}
           <button
+            disabled={loading}
             type="submit"
             className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors mt-4"
           >
-            Register
+            {loading ? "Creating Account..." : "Register"}
           </button>
         </form>
 
