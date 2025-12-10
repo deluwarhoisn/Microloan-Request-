@@ -15,6 +15,9 @@ import AddLoan from "../components/pages/dashboard/Manager/AddLoan";
 import LoadingSpinner from "../components/Shared/LoadingSpinner";
 import AboutUs from "../layouts/AboutUs/AboutUs";
 import Contact from "../layouts/AboutUs/Contact";
+import Profile from "../components/pages/dashboard/User/Profile";
+import PageNotFound from "../components/pages/PageNotFound";
+import MyLoans from "../components/pages/dashboard/User/MyLoans";
 
 export const router = createBrowserRouter([
   {
@@ -47,7 +50,7 @@ export const router = createBrowserRouter([
       },
       {
      path: "/*",
-     Component: LoadingSpinner,
+     Component: PageNotFound,
       },
       {
         path: "/about",
@@ -68,6 +71,14 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/add-Loan",
         element: <PrivetRoute><AddLoan></AddLoan></PrivetRoute>
+      },
+      {
+        path: "/dashboard/profile",
+        element: <PrivetRoute><Profile></Profile></PrivetRoute>
+      },
+      {
+        path: "/dashboard/my-loans",
+        element: <PrivetRoute><MyLoans></MyLoans></PrivetRoute>
       }
     ],
   },

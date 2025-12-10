@@ -21,7 +21,7 @@ const DashboardLayout = () => {
         <Link to="/" className="text-xl font-semibold">📊 Dashboard</Link>
         {user ? <Link onClick={handleLogOut} to="login" className="btn btn-outline btn-sm">Log Out</Link> : <Link to="login" className="btn btn-outline btn-sm">Login</Link>}
       </header>
-
+  
       <div className="flex flex-1">
         
         {/* Sidebar */}
@@ -32,6 +32,8 @@ const DashboardLayout = () => {
             <Link to="/dashboard/loan-applications" className="block px-3 py-2 rounded hover:bg-gray-700"> Loan Applications</Link>
             <Link to="/dashboard/manage-users" className="block px-3 py-2 rounded hover:bg-gray-700"> Manage Users</Link>
             <Link to="/dashboard/add-loan" className="block px-3 py-2 rounded hover:bg-gray-700"> Add Loan</Link>
+            <Link to="/dashboard/profile" className="block px-3 py-2 rounded hover:bg-gray-700"> Profile</Link>
+            <Link to="/dashboard/my-loans" className="block px-3 py-2 rounded hover:bg-gray-700"> My Loans</Link>
           </nav>
         </aside>
 
