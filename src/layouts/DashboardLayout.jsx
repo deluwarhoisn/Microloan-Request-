@@ -1,13 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { BiLogOut, BiSun, BiMoon } from "react-icons/bi";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import Swal from "sweetalert2";
-import { BiLogOut } from "react-icons/bi";
 
 const DashboardLayout = () => {
   const { user, logOut } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("theme") === "dark";
+  });
+
+  // Apply theme to html/body
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
 
   // Logout handler
   const handleLogOut = () => {
@@ -31,14 +45,30 @@ const DashboardLayout = () => {
     { name: "My Loans", path: "/dashboard/my-loans" },
   ];
 
+  // Update page title dynamically
+  useEffect(() => {
+    const currentLink = links.find((link) => link.path === location.pathname);
+    document.title = currentLink ? `Dashboard | ${currentLink.name}` : "Dashboard";
+  }, [location.pathname]);
+
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
 
       {/* Header */}
-      <header className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
-        <Link to="/" className="text-xl font-semibold">📊 Dashboard</Link>
+      <header className="bg-white dark:bg-gray-800 shadow-md py-4 px-6 flex justify-between items-center">
+        <Link to="/" className="text-xl font-semibold text-gray-900 dark:text-white">📊 Dashboard</Link>
 
         <div className="flex items-center space-x-4">
+          {/* Theme Toggle */}
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="text-xl text-gray-800 dark:text-white"
+            aria-label="Toggle Theme"
+          >
+            {darkMode ? <BiSun /> : <BiMoon />}
+          </button>
+
+          {/* Logout/Login */}
           {user ? (
             <button
               onClick={handleLogOut}
@@ -54,6 +84,7 @@ const DashboardLayout = () => {
           <button
             className="md:hidden px-2 py-1 bg-gray-800 text-white rounded"
             onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle Sidebar"
           >
             ☰
           </button>
@@ -61,7 +92,6 @@ const DashboardLayout = () => {
       </header>
 
       <div className="flex flex-1">
-
         {/* Sidebar */}
         <aside
           className={`w-64 bg-gray-900 text-white p-6 space-y-4 absolute md:relative md:block transition-transform duration-300 ${
@@ -91,8 +121,8 @@ const DashboardLayout = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-white text-center py-3 shadow-inner mt-auto">
-        <p className="text-gray-600 text-sm">
+      <footer className="bg-white dark:bg-gray-800 text-center py-3 shadow-inner mt-auto">
+        <p className="text-gray-600 dark:text-gray-300 text-sm">
           © {new Date().getFullYear()} Microloan Dashboard — All Rights Reserved
         </p>
       </footer>

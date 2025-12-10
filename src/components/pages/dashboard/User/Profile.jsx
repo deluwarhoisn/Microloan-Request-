@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../../../../hooks/useAuth";
-
-import Swal from "sweetalert2";
 import LoadingSpinner from "../../../Shared/LoadingSpinner";
+import Swal from "sweetalert2";
 
 const Profile = () => {
   const { user, logOut } = useAuth();
@@ -14,12 +13,8 @@ const Profile = () => {
 
   const handleLogout = () => {
     logOut()
-      .then(() => {
-        Swal.fire("Logged Out", "You have logged out successfully", "success");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      .then(() => Swal.fire("Logged Out", "You have logged out successfully", "success"))
+      .catch(err => console.log(err));
   };
 
   if (loading) return <LoadingSpinner />;
@@ -32,21 +27,10 @@ const Profile = () => {
           className="w-24 h-24 rounded-full mx-auto"
           alt="profile"
         />
-        <h2 className="text-2xl font-semibold mt-3 dark:text-white">
-          {user?.displayName}
-        </h2>
+        <h2 className="text-2xl font-semibold mt-3 dark:text-white">{user?.displayName}</h2>
         <p className="text-gray-600 dark:text-gray-300">{user?.email}</p>
-
-        <p className="mt-2 px-4 py-1 bg-blue-600 text-white inline-block rounded-md">
-          Role: User
-        </p>
-
-        <button
-          onClick={handleLogout}
-          className="mt-5 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition"
-        >
-          Logout
-        </button>
+        <p className="mt-2 px-4 py-1 bg-blue-600 text-white inline-block rounded-md">Role: User</p>
+        <button onClick={handleLogout} className="mt-5 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition">Logout</button>
       </div>
     </div>
   );
