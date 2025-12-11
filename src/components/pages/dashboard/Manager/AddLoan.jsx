@@ -34,7 +34,7 @@ const AddLoan = () => {
     };
 
     try {
-      const res = await axios.post("http://localhost:5000/LoanRequests", payload);
+      const res = await axios.post("https://microloan-request-server.vercel.app/LoanRequests", payload);
       if (res.data.insertedId) {
         Swal.fire({
           icon: "success",

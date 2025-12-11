@@ -7,7 +7,7 @@ const ApprovedLoans = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/loan-applications")
+    axios.get("https://microloan-request-server.vercel.app/loan-applications")
       .then(res => {
         const approved = res.data.filter(loan => loan.status === "Approved");
         setLoans(approved);

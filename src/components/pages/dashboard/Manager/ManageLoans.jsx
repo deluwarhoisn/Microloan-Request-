@@ -13,7 +13,7 @@ const ManageLoans = () => {
   // Fetch all loans
   const fetchLoans = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/AllLoans");
+      const res = await axios.get("https://microloan-request-server.vercel.app/AllLoans");
       setLoans(res.data);
     } catch (err) {
       console.error(err);
@@ -38,7 +38,7 @@ const ManageLoans = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`http://localhost:5000/loans/${id}`)
+          .delete(`https://microloan-request-server.vercel.app/loans/${id}`)
           .then(() => {
             Swal.fire("Deleted!", "Loan has been deleted.", "success");
             fetchLoans();

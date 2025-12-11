@@ -7,7 +7,7 @@ const LoanDetails = () => {
   const [loan, setLoan] = useState(null);
 
   useEffect(() => {
-  axios.get(`http://localhost:5000/loan-details/${id}`) // ✅ "details" matches server
+  axios.get(`https://microloan-request-server.vercel.app/loan-details/${id}`) // ✅ "details" matches server
     .then(res => {
       if (res.data.success) {
         setLoan(res.data.loan);

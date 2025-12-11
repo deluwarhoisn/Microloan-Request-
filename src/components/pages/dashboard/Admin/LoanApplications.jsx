@@ -10,7 +10,7 @@ const LoanApplications = () => {
   // Fetch all loan applications
   const fetchApplications = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/loan-applications");
+      const res = await axios.get("https://microloan-request-server.vercel.app/loan-applications");
       setApplications(res.data || []); // fallback to empty array
       setLoading(false);
     } catch (error) {

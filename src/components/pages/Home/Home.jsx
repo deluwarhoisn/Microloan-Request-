@@ -10,7 +10,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/LoanRequests?limit=6")
+      .get("https://microloan-request-server.vercel.app/LoanRequests?limit=6")
       .then((res) => setLoans(res.data))
       .catch((err) => console.log(err));
   }, []);
