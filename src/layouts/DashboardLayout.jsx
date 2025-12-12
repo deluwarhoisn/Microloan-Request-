@@ -43,6 +43,7 @@ const DashboardLayout = () => {
     { name: "Add Loan", path: "/dashboard/add-loan" },
     { name: "Profile", path: "/dashboard/profile" },
     { name: "My Loans", path: "/dashboard/my-loans" },
+    { name: "Pending Loan", path: "/dashboard/my-loans" },
   ];
 
   // Update page title dynamically

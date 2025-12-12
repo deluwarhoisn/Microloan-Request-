@@ -19,7 +19,7 @@ const ApprovedLoans = () => {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <div>
+    <div className="">
       <h2 className="text-2xl font-semibold mb-4">Approved Loans</h2>
       <div className="overflow-x-auto">
         <table className="table-auto w-full bg-white dark:bg-gray-900 rounded-md shadow">
