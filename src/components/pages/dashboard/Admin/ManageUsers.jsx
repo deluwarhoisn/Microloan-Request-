@@ -9,7 +9,7 @@ const ManageUsers = () => {
   // Fetch all users
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("https://microloan-request-server.vercel.app/users");
+      const res = await axios.get("https://https://microloan-request-server.vercel.app/users");
       setUsers(res.data);
       setLoading(false);
     } catch (error) {
@@ -25,7 +25,7 @@ const ManageUsers = () => {
   // Update user role
   const handleRoleChange = async (userId, newRole) => {
     try {
-      await axios.put(`https://microloan-request-server.vercel.app/users/${userId}/role`, { role: newRole });
+      await axios.put(`https://https://microloan-request-server.vercel.app/users/${userId}/role`, { role: newRole });
       Swal.fire({
         icon: "success",
         title: "Role updated",
@@ -54,7 +54,7 @@ const ManageUsers = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.put(`https://microloan-request-server.vercel.app/users/${userId}/status`, {
+        await axios.put(`https://https://microloan-request-server.vercel.app/users/${userId}/status`, {
           status: currentStatus === "active" ? "suspended" : "active",
         });
         Swal.fire({

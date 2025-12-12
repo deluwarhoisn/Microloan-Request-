@@ -9,7 +9,7 @@ const AdminAllLoans = () => {
   // Fetch all loans
   const fetchLoans = async () => {
     try {
-      const res = await axios.get("https://microloan-request-server.vercel.app/AllLoans");
+      const res = await axios.get("https://https://microloan-request-server.vercel.app/AllLoans");
       setLoans(res.data);
       setLoading(false);
     } catch (error) {
@@ -34,7 +34,7 @@ const AdminAllLoans = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`https://microloan-request-server.vercel.app/loans/${loanId}`);
+        await axios.delete(`https://https://microloan-request-server.vercel.app/loans/${loanId}`);
         Swal.fire({
           icon: "success",
           title: "Loan deleted",
@@ -52,7 +52,7 @@ const AdminAllLoans = () => {
   // Show on Home toggle
   const handleShowOnHome = async (loanId, current) => {
     try {
-      await axios.put(`https://microloan-request-server.vercel.app/loans/${loanId}/home`, {
+      await axios.put(`https://https://microloan-request-server.vercel.app/loans/${loanId}/home`, {
         showOnHome: !current,
       });
       fetchLoans();

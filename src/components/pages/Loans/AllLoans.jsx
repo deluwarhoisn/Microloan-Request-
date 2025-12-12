@@ -6,7 +6,7 @@ const AllLoans = () => {
   const [loans, setLoans] = useState([]);
 
   useEffect(() => {
-    axios.get("https://microloan-request-server.vercel.app/AllLoans")
+    axios.get("https://https://microloan-request-server.vercel.app/AllLoans")
       .then(res => setLoans(res.data))
       .catch(err => console.log(err));
   }, []);
