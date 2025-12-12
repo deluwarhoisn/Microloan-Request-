@@ -38,7 +38,7 @@ const ManageLoans = () => {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`https://https://microloan-request-server.vercel.app/loans/${id}`)
+          .delete(`https://microloan-request-server.vercel.app/loans/${id}`)
           .then(() => {
             Swal.fire("Deleted!", "Loan has been deleted.", "success");
             fetchLoans();

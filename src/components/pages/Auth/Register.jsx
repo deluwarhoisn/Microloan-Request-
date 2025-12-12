@@ -36,7 +36,7 @@ const Register = () => {
           photo: data.photo,
         };
 
-        fetch(`https://https://microloan-request-server.vercel.app/users`, {
+        fetch(`https://microloan-request-server.vercel.app/users`, {
           method: "POST",
           headers: {
             "content-type": "application/json",

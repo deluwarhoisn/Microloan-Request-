@@ -4,7 +4,7 @@ import useAuth from './useAuth';
 
 
 const axiosSecure = axios.create({
-    baseURL: 'https://https://microloan-request-server.vercel.app'
+    baseURL: 'https://microloan-request-server.vercel.app'
 })
 
 const useAxiosSecure = () => {

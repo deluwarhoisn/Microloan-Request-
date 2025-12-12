@@ -1,12 +1,12 @@
 // Fetch all loans
 const getLoans = async () => {
-  const res = await fetch("https://https://microloan-request-server.vercel.app/loans");
+  const res = await fetch("https://microloan-request-server.vercel.app/loans");
   return res.json();
 };
 
 // Fetch loan by ID
 const getLoanById = async (id) => {
-  const res = await fetch(`https://https://microloan-request-server.vercel.app/loans/${id}`);
+  const res = await fetch(`https://microloan-request-server.vercel.app/loans/${id}`);
   return res.json();
 };
 

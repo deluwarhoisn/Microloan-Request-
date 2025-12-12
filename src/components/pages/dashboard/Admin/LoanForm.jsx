@@ -23,7 +23,7 @@ const LoanForm = ({ selectedLoan }) => {
         setLoading(true);
 
         try {
-            const res = await fetch("https://https://microloan-request-server.vercel.app/loan-application", {
+            const res = await fetch("https://microloan-request-server.vercel.app/loan-application", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(finalData),

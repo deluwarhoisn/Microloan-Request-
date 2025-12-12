@@ -15,7 +15,7 @@ const MyLoans = () => {
 
   useEffect(() => {
     axios
-      .get(`https://https://microloan-request-server.vercel.app/loan-applications?email=${user?.email}`)
+      .get(`https://microloan-request-server.vercel.app/loan-applications?email=${user?.email}`)
       .then((res) => setLoans(res.data))
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
@@ -30,7 +30,7 @@ const MyLoans = () => {
       confirmButtonText: "Yes, cancel it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.patch(`https://https://microloan-request-server.vercel.app/cancel-loan/${id}`)
+        axios.patch(`https://microloan-request-server.vercel.app/cancel-loan/${id}`)
           .then(() => {
             Swal.fire("Cancelled!", "Your loan request has been cancelled.", "success");
             setLoans(loans.map(loan => loan._id === id ? { ...loan, status: "Cancelled" } : loan));
@@ -48,7 +48,7 @@ const MyLoans = () => {
       confirmButtonText: "Proceed"
     }).then(() => {
       // Redirect user to stripe payment page
-      window.location.href = `https://https://microloan-request-server.vercel.app/pay/${loan._id}`;
+      window.location.href = `https://microloan-request-server.vercel.app/pay/${loan._id}`;
     });
   };
 
