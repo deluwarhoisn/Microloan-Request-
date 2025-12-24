@@ -19,8 +19,8 @@ const Footer = () => {
         >
          
         </svg>
-       <img className="w-10 h-10" src={logo} alt="Logo" />
-           <p className="font-bold text-2xl text-primary">Microloan</p>
+       <img className="w-10 h-10 rounded-full" src={logo} alt="Logo" />
+           <p className=" text-2xl text-primary font-extrabold font-serif italic">Microloan</p>
       </div>
 
       <p className="text-sm opacity-70 max-w-md mt-2 leading-relaxed">
