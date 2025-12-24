@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom'; // ✅ FIXED
-import useAuth from '../../hooks/useAuth';
-import Logo from './Logo';
+import React, { useEffect, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import Logo from "./Logo";
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  const [theme, setTheme] = useState(
+    localStorage.getItem("theme") || "light"
+  );
 
-  // Apply theme on load
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
@@ -18,76 +19,101 @@ const Navbar = () => {
   };
 
   const handleLogOut = () => {
-    logOut().catch(err => console.log(err));
+    logOut().catch(console.log);
   };
+
+  const navLinkStyle = ({ isActive }) =>
+    isActive
+      ? "text-primary font-semibold border-b-2 border-primary"
+      : "hover:text-primary transition duration-200";
 
   const links = (
     <>
-      <li><NavLink to="/">Home</NavLink></li>
-      <li><NavLink to="/loans">All Loans</NavLink></li>
-      <li><NavLink to="/about">About Us</NavLink></li>
-      <li><NavLink to="/contact">Contact</NavLink></li>
-      <li><NavLink to="/loan-form">Loan Form</NavLink></li>
-      <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+      <li><NavLink className={navLinkStyle} to="/">Home</NavLink></li>
+      <li><NavLink className={navLinkStyle} to="/loans">All Loans</NavLink></li>
+      <li><NavLink className={navLinkStyle} to="/about">About Us</NavLink></li>
+      <li><NavLink className={navLinkStyle} to="/contact">Contact</NavLink></li>
+      <li><NavLink className={navLinkStyle} to="/loan-form">Loan Form</NavLink></li>
+      <li><NavLink className={navLinkStyle} to="/dashboard">Dashboard</NavLink></li>
     </>
   );
 
   return (
-    <div className="navbar bg-base-100 px-5 lg:px-10 shadow-sm sticky top-0 z-50">
+    <div className="navbar bg-base-100/80 backdrop-blur-md px-5 lg:px-12 shadow-md sticky top-0 z-50">
 
-      {/* LEFT SIDE */}
+      {/* LEFT */}
       <div className="navbar-start">
-        {/* Mobile Menu */}
         <div className="dropdown lg:hidden">
-          <div tabIndex={0} className="btn btn-ghost">
-            ☰
-          </div>
+          <button tabIndex={0} className="btn btn-ghost text-xl">☰</button>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[100] p-2 shadow bg-base-100 rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 p-3 shadow-lg bg-base-100 rounded-xl w-56"
           >
             {links}
           </ul>
         </div>
-
-        {/* Logo */}
         <Logo />
       </div>
 
-      {/* CENTER LINKS (Desktop Only) */}
+      {/* CENTER */}
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1 gap-4">
+        <ul className="menu menu-horizontal gap-6 text-sm font-medium">
           {links}
         </ul>
       </div>
 
-      {/* RIGHT SIDE */}
+      {/* RIGHT */}
       <div className="navbar-end flex items-center gap-3">
-        {user ? (
-          <button onClick={handleLogOut} className="btn btn-outline btn-sm">
-            Log Out
-          </button>
-        ) : (
-          <Link to="/login" className="btn btn-outline btn-sm">
-            Login
-          </Link>
-        )}
-
-        {!user && (
-          <Link to="/register" className="btn btn-primary btn-sm">
-            Register
-          </Link>
-        )}
 
         {/* Theme Toggle */}
         <button
-          className="btn btn-ghost btn-sm text-xl"
           onClick={handleThemeToggle}
+          className="btn btn-circle btn-ghost text-lg"
         >
           {theme === "light" ? "🌙" : "☀️"}
         </button>
-      </div>
 
+        {/* User Section */}
+        {user ? (
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} className="btn btn-ghost btn-circle avatar">
+              <div className="w-9 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                <img
+                  src={user.photoURL || "https://i.ibb.co/2FsfXqM/user.png"}
+                  alt="user"
+                />
+              </div>
+            </div>
+
+            <ul
+              tabIndex={0}
+              className="menu dropdown-content mt-3 p-3 shadow-lg bg-base-100 rounded-xl w-60"
+            >
+              <li className="mb-2">
+                <p className="font-semibold">{user.displayName || "User"}</p>
+                <p className="text-xs text-gray-500">{user.email}</p>
+              </li>
+              <hr />
+              <li><Link to="/dashboard">Dashboard</Link></li>
+              <li><Link to="/profile">My Profile</Link></li>
+              <li>
+                <button onClick={handleLogOut} className="text-error">
+                  Log Out
+                </button>
+              </li>
+            </ul>
+          </div>
+        ) : (
+          <>
+            <Link to="/login" className="btn btn-outline btn-sm">
+              Login
+            </Link>
+            <Link to="/register" className="btn btn-primary btn-sm">
+              Register
+            </Link>
+          </>
+        )}
+      </div>
     </div>
   );
 };
