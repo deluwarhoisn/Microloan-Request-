@@ -61,7 +61,7 @@ const Home = () => {
 
       {/* ================= POPULAR LOANS ================= */}
       <section className="py-20">
-        <h2 className="text-3xl font-bold text-center mb-10">
+        <h2 className="text-3xl font-bold text-center mb-10 font-serif">
           Popular Loan Options
         </h2>
 
@@ -108,7 +108,7 @@ const Home = () => {
 
       {/* ================= HOW IT WORKS ================= */}
       <section className="py-20 bg-base-200 rounded-2xl">
-        <h2 className="text-3xl font-bold text-center mb-12">
+        <h2 className="text-3xl font-bold text-center mb-12 font-serif">
           How It Works
         </h2>
 
@@ -116,15 +116,15 @@ const Home = () => {
           {[
             {
               title: "Apply Online",
-              img: "https://i.ibb.co/6yQy5Hf/apply.png",
+              img: "../../../../public/images (2).jfif",
             },
             {
               title: "Get Approved",
-              img: "https://i.ibb.co/0ZcH1TX/approve.png",
+              img: "../../../../public/stamp-logo-approved-seal-logo-white-background_1195262-5863.avif",
             },
             {
               title: "Receive Funds",
-              img: "https://i.ibb.co/WKk1hHb/money.png",
+              img: "../../../../public/receive-payment-icon-vector.jpg",
             },
           ].map((item, index) => (
             <motion.div
