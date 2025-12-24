@@ -50,7 +50,7 @@ const Home = () => {
         </div>
 
         <motion.img
-          src="./../../../../public/shutterstock_568573969-min.jpg"
+          src="/public/shutterstock_568573969-min.jpg"
           alt="Loan Hero"
           className="rounded-2xl shadow-xl"
           initial={{ scale: 0.9 }}
@@ -116,15 +116,15 @@ const Home = () => {
           {[
             {
               title: "Apply Online",
-              img: "../../../../public/images (2).jfif",
+              img: "/public/images (2).jfif",
             },
             {
               title: "Get Approved",
-              img: "../../../../public/stamp-logo-approved-seal-logo-white-background_1195262-5863.avif",
+              img: "/public/stamp-logo-approved-seal-logo-white-background_1195262-5863.avif",
             },
             {
               title: "Receive Funds",
-              img: "../../../../public/receive-payment-icon-vector.jpg",
+              img: "/public/receive-payment-icon-vector.jpg",
             },
           ].map((item, index) => (
             <motion.div
