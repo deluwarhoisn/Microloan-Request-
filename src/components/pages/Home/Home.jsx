@@ -5,18 +5,37 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [loans, setLoans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
+    const controller = new AbortController();
+    setLoading(true);
+    setError(null);
     axios
-      .get("https://microloan-request-server.vercel.app/LoanRequests?limit=6")
-      .then((res) => setLoans(res.data))
-      .catch((err) => console.log(err));
+      .get("https://microloan-request-server.vercel.app/LoanRequests?limit=6", {
+        signal: controller.signal,
+      })
+      .then((res) => setLoans(res.data || []))
+      .catch((err) => {
+        // ignore abort
+        if (err?.code === "ERR_CANCELED" || err?.name === "CanceledError") return;
+        console.error(err);
+        setError("Failed to load loans. Please try again.");
+      })
+      .finally(() => setLoading(false));
+
+    return () => controller.abort();
   }, []);
+
+  const handleImageError = (e) => {
+    e.currentTarget.src = "/placeholder.png";
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-5">
-
       {/* ================= HERO SECTION ================= */}
       <motion.section
         className="grid lg:grid-cols-2 gap-12 items-center py-24"
@@ -36,6 +55,7 @@ const Home = () => {
             <button
               onClick={() => navigate("/loan-form")}
               className="btn btn-primary px-8"
+              aria-label="Apply for a loan"
             >
               Apply Now
             </button>
@@ -43,6 +63,7 @@ const Home = () => {
             <button
               onClick={() => navigate("/loans")}
               className="btn btn-outline px-8"
+              aria-label="Explore loan options"
             >
               Explore Loans
             </button>
@@ -50,9 +71,10 @@ const Home = () => {
         </div>
 
         <motion.img
-          src="/public/shutterstock_568573969-min.jpg"
+          src="/shutterstock_568573969-min.jpg"
           alt="Loan Hero"
           className="rounded-2xl shadow-xl"
+          loading="lazy"
           initial={{ scale: 0.9 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.6 }}
@@ -65,8 +87,29 @@ const Home = () => {
           Popular Loan Options
         </h2>
 
-        {loans.length === 0 ? (
+        {loading ? (
           <p className="text-center text-gray-500">Loading loan data...</p>
+        ) : error ? (
+          <div className="text-center">
+            <p className="text-red-500 mb-4">{error}</p>
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                setLoading(true);
+                setError(null);
+                // trigger effect by forcing re-render: simple approach
+                axios
+                  .get("https://microloan-request-server.vercel.app/LoanRequests?limit=6")
+                  .then((res) => setLoans(res.data || []))
+                  .catch((err) => setError("Retry failed"))
+                  .finally(() => setLoading(false));
+              }}
+            >
+              Retry
+            </button>
+          </div>
+        ) : loans.length === 0 ? (
+          <p className="text-center text-gray-500">No loan options found.</p>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {loans.map((loan) => (
@@ -77,9 +120,11 @@ const Home = () => {
               >
                 <figure>
                   <img
-                    src={loan.image}
-                    alt={loan.loanTitle}
+                    src={loan.image || "/placeholder.png"}
+                    alt={loan.loanTitle || "Loan image"}
                     className="h-48 w-full object-cover"
+                    onError={handleImageError}
+                    loading="lazy"
                   />
                 </figure>
 
@@ -116,15 +161,15 @@ const Home = () => {
           {[
             {
               title: "Apply Online",
-              img: "/public/images (2).jfif",
+              img: "/images (2).jfif",
             },
             {
               title: "Get Approved",
-              img: "/public/stamp-logo-approved-seal-logo-white-background_1195262-5863.avif",
+              img: "/stamp-logo-approved-seal-logo-white-background_1195262-5863.avif",
             },
             {
               title: "Receive Funds",
-              img: "/public/receive-payment-icon-vector.jpg",
+              img: "/receive-payment-icon-vector.jpg",
             },
           ].map((item, index) => (
             <motion.div
@@ -134,7 +179,7 @@ const Home = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.2 }}
             >
-              <img src={item.img} className="w-20 mx-auto mb-4" />
+              <img src={item.img} className="w-20 mx-auto mb-4" loading="lazy" onError={(e)=>{e.currentTarget.src='/placeholder.png'}} />
               <h3 className="text-xl font-bold mb-2">{item.title}</h3>
               <p className="text-gray-500 text-sm">
                 Simple process with fast approval and minimum documents.
