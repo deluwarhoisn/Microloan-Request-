@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 const AdminAllLoans = () => {
+  const navigate = useNavigate();
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -107,7 +109,7 @@ const AdminAllLoans = () => {
                   <td className="flex gap-2">
                     {/* Update button - redirect to edit page */}
                     <button
-                      onClick={() => window.location.href = `/dashboard/edit-loan/${loan._id}`}
+                      onClick={() => navigate(`/dashboard/update-loan/${loan._id}`)}
                       className="btn btn-sm btn-info"
                     >
                       Update

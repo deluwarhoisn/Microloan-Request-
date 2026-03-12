@@ -1,9 +1,11 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import Swal from "sweetalert2";
+import useAuth from "../../../../hooks/useAuth";
 
 const LoanForm = ({ selectedLoan }) => {
-    const userEmail = "user@example.com"; // Replace with real auth context
+    const { user } = useAuth();
+    const userEmail = user?.email || "";
 
     const { register, handleSubmit, reset } = useForm();
     const [loading, setLoading] = useState(false);
@@ -11,13 +13,21 @@ const LoanForm = ({ selectedLoan }) => {
     const defaultValues = { status: "Pending", applicationFeeStatus: "Unpaid" };
 
     const onSubmit = async (data) => {
+        const fullName = [data.firstName, data.lastName].filter(Boolean).join(" ");
+
         const finalData = {
             ...data,
             ...defaultValues,
+            name: fullName,
+            amount: data.loanAmount,
+            additionalInfo: data.extraNotes || data.reason || "",
+            loanId: selectedLoan?._id || "",
+            category: selectedLoan?.category || data.category || "General",
             loanTitle: selectedLoan?.loanTitle,
             interestRate: selectedLoan?.interest,
             email: userEmail,
-            appliedDate: new Date(),
+            createdAt: new Date().toISOString(),
+            appliedDate: new Date().toISOString(),
         };
 
         setLoading(true);

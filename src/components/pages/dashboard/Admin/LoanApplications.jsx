@@ -2,7 +2,24 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
+const normalizeStatus = (status) => {
+  const normalized = String(status || "Pending").toLowerCase();
+
+  if (normalized === "approved") return "Approved";
+  if (normalized === "rejected") return "Rejected";
+  if (normalized === "cancelled" || normalized === "canceled") return "Cancelled";
+  return "Pending";
+};
+
+const getStatusBadgeClass = (status) => {
+  if (status === "Approved") return "bg-green-600";
+  if (status === "Rejected") return "bg-red-600";
+  if (status === "Cancelled") return "bg-gray-600";
+  return "bg-yellow-500";
+};
+
 const LoanApplications = () => {
+  const baseUrl = "https://microloan-request-server.vercel.app";
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -32,25 +49,81 @@ const LoanApplications = () => {
   const filteredApplications =
     filter === "All"
       ? applications
-      : applications.filter((app) => app.status === filter);
+      : applications.filter((app) => normalizeStatus(app.status) === filter);
+
+  const statusCounts = applications.reduce(
+    (acc, app) => {
+      const status = normalizeStatus(app.status);
+      acc[status] += 1;
+      return acc;
+    },
+    { Pending: 0, Approved: 0, Rejected: 0, Cancelled: 0 }
+  );
+
+  const handleStatusUpdate = async (applicationId, nextStatus) => {
+    const normalized = normalizeStatus(nextStatus);
+
+    const requests = [
+      () => axios.put(`${baseUrl}/loan-applications/${applicationId}/status`, { status: normalized }),
+      () => axios.patch(`${baseUrl}/loan-applications/${applicationId}/status`, { status: normalized }),
+      () => axios.patch(`${baseUrl}/loan-applications/${applicationId}`, { status: normalized }),
+      () => axios.put(`${baseUrl}/loan-applications/${applicationId}`, { status: normalized }),
+    ];
+
+    let updated = false;
+    for (const request of requests) {
+      try {
+        await request();
+        updated = true;
+        break;
+      } catch {
+        // try next endpoint
+      }
+    }
+
+    setApplications((prev) =>
+      prev.map((app) =>
+        app._id === applicationId ? { ...app, status: normalized } : app
+      )
+    );
+
+    if (updated) {
+      Swal.fire("Updated", `Status changed to ${normalized}.`, "success");
+    } else {
+      Swal.fire("Updated Locally", `Status set to ${normalized} in dashboard view.`, "warning");
+    }
+  };
 
   // View details popup
   const handleView = (application) => {
+    const fullName =
+      application.name ||
+      [application.firstName, application.lastName].filter(Boolean).join(" ") ||
+      "N/A";
+
+    const email = application.email || "N/A";
+    const loanId = application.loanId || application._id || "N/A";
+    const category = application.category || application.loanCategory || "N/A";
+    const amount = application.amount || application.loanAmount || "N/A";
+    const status = application.status || "Pending";
+    const submittedAt = application.createdAt || application.appliedDate;
+    const info = application.additionalInfo || application.reason || application.extraNotes || "N/A";
+
     Swal.fire({
       title: "Loan Application Details",
       html: `
         <div style="text-align:left">
-          <p><strong>User:</strong> ${application.name || "N/A"} (${application.email || "N/A"})</p>
-          <p><strong>Loan ID:</strong> ${application.loanId || "N/A"}</p>
-          <p><strong>Category:</strong> ${application.category || "N/A"}</p>
-          <p><strong>Amount:</strong> $${application.amount || "N/A"}</p>
-          <p><strong>Status:</strong> ${application.status || "N/A"}</p>
+          <p><strong>User:</strong> ${fullName} (${email})</p>
+          <p><strong>Loan ID:</strong> ${loanId}</p>
+          <p><strong>Category:</strong> ${category}</p>
+          <p><strong>Amount:</strong> $${amount}</p>
+          <p><strong>Status:</strong> ${status}</p>
           <p><strong>Submitted:</strong> ${
-            application.createdAt
-              ? new Date(application.createdAt).toLocaleString()
+            submittedAt
+              ? new Date(submittedAt).toLocaleString()
               : "N/A"
           }</p>
-          <p><strong>Info:</strong> ${application.additionalInfo || "N/A"}</p>
+          <p><strong>Info:</strong> ${info}</p>
         </div>
       `,
       icon: "info",
@@ -68,12 +141,13 @@ const LoanApplications = () => {
         <select
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="select select-bordered w-40"
+          className="select select-bordered w-52"
         >
-          <option value="All">All</option>
-          <option value="Pending">Pending</option>
-          <option value="Approved">Approved</option>
-          <option value="Rejected">Rejected</option>
+          <option value="All">All ({applications.length})</option>
+          <option value="Pending">Pending ({statusCounts.Pending})</option>
+          <option value="Approved">Approved ({statusCounts.Approved})</option>
+          <option value="Rejected">Rejected ({statusCounts.Rejected})</option>
+          <option value="Cancelled">Cancelled ({statusCounts.Cancelled})</option>
         </select>
       </div>
 
@@ -123,29 +197,40 @@ const LoanApplications = () => {
 
                     <td>{app.category || "N/A"}</td>
 
-                    <td>${app.amount || "N/A"}</td>
+                    <td>${app.amount || app.loanAmount || "N/A"}</td>
 
                     <td>
+                      {/** Normalize status so filtering and badge colors always match. */}
+                      {(() => {
+                        const status = normalizeStatus(app.status);
+                        return (
                       <span
-                        className={`px-3 py-1 rounded-full text-white text-sm ${
-                          app.status === "Pending"
-                            ? "bg-yellow-500"
-                            : app.status === "Approved"
-                            ? "bg-green-600"
-                            : "bg-red-600"
-                        }`}
+                        className={`px-3 py-1 rounded-full text-white text-sm ${getStatusBadgeClass(status)}`}
                       >
-                        {app.status}
+                        {status}
                       </span>
+                        );
+                      })()}
                     </td>
 
-                    <td>
+                    <td className="flex gap-2 items-center">
                       <button
                         onClick={() => handleView(app)}
                         className="btn btn-sm btn-info"
                       >
                         View
                       </button>
+
+                      <select
+                        className="select select-bordered select-sm w-32"
+                        value={normalizeStatus(app.status)}
+                        onChange={(e) => handleStatusUpdate(app._id, e.target.value)}
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
                     </td>
                   </tr>
                 ))

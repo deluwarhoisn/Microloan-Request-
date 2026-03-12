@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom'; // ✅ FIXED
+import { FiLogIn } from 'react-icons/fi';
+import { FaUserCircle } from 'react-icons/fa';
 import useAuth from '../../hooks/useAuth';
 import Logo from './Logo';
 
@@ -44,7 +46,7 @@ const Navbar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[100] p-2 shadow bg-base-100 rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 z-100 p-2 shadow bg-base-100 rounded-box w-52"
           >
             {links}
           </ul>
@@ -63,13 +65,28 @@ const Navbar = () => {
 
       {/* RIGHT SIDE */}
       <div className="navbar-end flex items-center gap-3">
+        {user && (
+          <Link to="/dashboard" className="flex items-center gap-2">
+            {user?.photoURL ? (
+              <img
+                src={user.photoURL}
+                alt={user?.displayName || "User"}
+                title={user?.email || "User"}
+                className="w-9 h-9 rounded-full object-cover border border-base-300"
+              />
+            ) : (
+              <FaUserCircle title={user?.email || "User"} className="text-3xl text-base-content/70" />
+            )}
+          </Link>
+        )}
+
         {user ? (
           <button onClick={handleLogOut} className="btn btn-outline btn-sm">
             Log Out
           </button>
         ) : (
-          <Link to="/login" className="btn btn-outline btn-sm">
-            Login
+          <Link to="/login" className="btn btn-outline btn-sm gap-1">
+            <FiLogIn /> Login
           </Link>
         )}
 

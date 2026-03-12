@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import useAuth from "../../../../hooks/useAuth";
+import useUserRole from "../../../../hooks/useUserRole";
 import LoadingSpinner from "../../../Shared/LoadingSpinner";
 import Swal from "sweetalert2";
 
 const Profile = () => {
   const { user, logOut } = useAuth();
+  const { role } = useUserRole();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,7 +31,7 @@ const Profile = () => {
         />
         <h2 className="text-2xl font-semibold mt-3 dark:text-white">{user?.displayName}</h2>
         <p className="text-gray-600 dark:text-gray-300">{user?.email}</p>
-        <p className="mt-2 px-4 py-1 bg-blue-600 text-white inline-block rounded-md">Role: User</p>
+        <p className="mt-2 px-4 py-1 bg-blue-600 text-white inline-block rounded-md">Role: {(role || "user").toUpperCase()}</p>
         <button onClick={handleLogout} className="mt-5 bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition">Logout</button>
       </div>
     </div>

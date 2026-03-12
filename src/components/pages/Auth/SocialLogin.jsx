@@ -2,6 +2,8 @@ import React from 'react';
 import useAuth from '../../../hooks/useAuth';
 import { useLocation, useNavigate } from 'react-router';
 
+const ADMIN_EMAIL_KEY = "microloan_admin_email";
+
 const SocialLogin = () => {
 
 const {signInGoogle} = useAuth();
@@ -11,9 +13,11 @@ const navigate = useNavigate();
 
 const handleGoogleSignIn = () =>{
  signInGoogle()
- .then(result =>{
-    console.log(result.user);
-    navigate(location.state || '/')
+ .then((result) =>{
+        if (!localStorage.getItem(ADMIN_EMAIL_KEY)) {
+            localStorage.setItem(ADMIN_EMAIL_KEY, result?.user?.email || "");
+        }
+     navigate(location.state || '/dashboard')
  })
  .catch(error =>{
     console.log(error)

@@ -1,19 +1,72 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import img from '../../../assets/images (1).png'
+import loansApi from "../../../api/Loans";
+import img from "../../../assets/images (1).png";
+
+const processSteps = [
+  {
+    title: "Apply Online",
+    description: "Fill out a quick digital form with your financial details and required documents.",
+  },
+  {
+    title: "Get Approved",
+    description: "Our review team evaluates your request and provides a decision as quickly as possible.",
+  },
+  {
+    title: "Receive Funds",
+    description: "Once approved, funds are disbursed through your selected payment channel.",
+  },
+];
+
+const testimonials = [
+  {
+    quote: "Fast approval and no hassle.",
+    author: "Nusrat, Small Business Owner",
+  },
+  {
+    quote: "Clean process and very supportive team.",
+    author: "Rafi, Freelancer",
+  },
+  {
+    quote: "One of the easiest loan experiences I have had.",
+    author: "Sadia, Entrepreneur",
+  },
+];
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0 },
+};
+
+const stagger = {
+  hidden: {},
+  show: {
+    transition: {
+      staggerChildren: 0.12,
+    },
+  },
+};
 
 const Home = () => {
-  const [loans, setLoans] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    axios
-      .get("https://microloan-request-server.vercel.app/LoanRequests?limit=6")
-      .then((res) => setLoans(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+  const {
+    data: loans = [],
+    isLoading: isLoadingLoans,
+    isError: isLoansError,
+  } = useQuery({
+    queryKey: ["popular-loans", 6],
+    queryFn: () => loansApi.getPopularLoans(6),
+  });
+
+  const highestLimitLoan = loans.reduce(
+    (max, loan) => {
+      const currentLimit = Number(loan.maxAmount || loan.limit || 0);
+      return currentLimit > max ? currentLimit : max;
+    },
+    0
+  );
 
   return (
     <div className="max-w-7xl mx-auto px-5">
@@ -21,17 +74,28 @@ const Home = () => {
       {/* HERO SECTION */}
       <motion.div
         className="flex flex-col lg:flex-row items-center gap-10 py-20"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        variants={stagger}
+        initial="hidden"
+        animate="show"
       >
-        <div className="flex-1">
+        <motion.div className="flex-1" variants={fadeUp} transition={{ duration: 0.55 }}>
           <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
             Get Funding Fast, Easy & Secure.
           </h1>
           <p className="mt-5 text-gray-600">
             Apply for personal, business or education loans in minutes with fast approval.
           </p>
+
+          <div className="mt-6 grid grid-cols-2 gap-3 max-w-md">
+            <div className="rounded-lg bg-blue-50 border border-blue-100 p-3">
+              <p className="text-xs text-blue-700">Popular Loans</p>
+              <p className="text-xl font-bold text-blue-900">{loans.length || 0}+</p>
+            </div>
+            <div className="rounded-lg bg-emerald-50 border border-emerald-100 p-3">
+              <p className="text-xs text-emerald-700">Highest Limit</p>
+              <p className="text-xl font-bold text-emerald-900">${highestLimitLoan.toLocaleString()}</p>
+            </div>
+          </div>
 
           <div className="mt-6 flex gap-4">
             <button
@@ -48,42 +112,67 @@ const Home = () => {
               Explore Loans
             </button>
           </div>
-        </div>
+        </motion.div>
 
         <motion.img
           src={img}
           alt="loan"
-          className="rounded-lg shadow-xl flex-1"
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 0.6 }}
+          className="rounded-lg shadow-xl flex-1 max-h-[440px] object-cover"
+          variants={fadeUp}
+          transition={{ duration: 0.6, delay: 0.1 }}
         />
       </motion.div>
 
       {/* AVAILABLE LOANS */}
       <h2 className="text-3xl font-bold text-center mb-8">Popular Loan Options</h2>
 
-      {loans.length === 0 ? (
+      {isLoadingLoans ? (
         <p className="text-center text-gray-500">Loading loan data...</p>
+      ) : isLoansError ? (
+        <p className="text-center text-red-500">Failed to load loan data.</p>
+      ) : loans.length === 0 ? (
+        <p className="text-center text-gray-500">No loan data found.</p>
       ) : (
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
         >
-          {loans.map((loan) => (
+          {loans.map((loan, index) => (
             <motion.div
               key={loan._id}
               className="border rounded-xl p-5 shadow-lg hover:shadow-xl transition-all bg-base-100"
-              whileHover={{ scale: 1.05 }}
+              variants={fadeUp}
+              transition={{ duration: 0.45, delay: index * 0.04 }}
+              whileHover={{ y: -6, scale: 1.01 }}
             >
-              <img src={loan.image} className="w-full h-40 object-cover rounded-lg" />
-              <h3 className="text-xl font-semibold mt-4">{loan.loanTitle}</h3>
-              <p className="text-gray-500">{loan.category}</p>
-              <p className="mt-2 font-medium">Max Limit: ${loan.maxAmount}</p>
+              <div className="relative">
+                <img src={loan.image} className="w-full h-40 object-cover rounded-lg" />
+                <span className="absolute top-2 right-2 text-xs px-2 py-1 rounded bg-black/75 text-white">
+                  {loan.category || "General"}
+                </span>
+              </div>
+
+              <h3 className="text-xl font-semibold mt-4">{loan.loanTitle || loan.title}</h3>
+
+              <div className="mt-3 flex items-center justify-between text-sm">
+                <p className="text-gray-500">Interest</p>
+                <p className="font-semibold text-blue-700">{loan.interest}%</p>
+              </div>
+
+              <div className="mt-2 flex items-center justify-between text-sm">
+                <p className="text-gray-500">Max Limit</p>
+                <p className="font-semibold">${Number(loan.maxAmount || loan.limit || 0).toLocaleString()}</p>
+              </div>
+
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+                <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${Math.min((Number(loan.interest || 0) / 15) * 100, 100)}%` }}></div>
+              </div>
 
               <Link
                 to={`/loan-details/${loan._id}`}
-                onClick={() => navigate(`/loan/${loan._id}`)}
                 className="btn btn-primary btn-sm mt-4 w-full"
               >
                 View Details
@@ -97,44 +186,53 @@ const Home = () => {
       <div className="py-20 text-center">
         <h2 className="text-3xl font-bold mb-10">How It Works</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          {["Apply Online", "Get Approved", "Receive Funds"].map((step, index) => (
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-10"
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {processSteps.map((step, index) => (
             <motion.div
-              key={index}
+              key={step.title}
               className="p-6 border rounded-xl shadow-md bg-base-100"
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2 }}
+              variants={fadeUp}
+              transition={{ duration: 0.45, delay: index * 0.06 }}
             >
-              <h3 className="text-xl font-bold mb-3">{step}</h3>
+              <h3 className="text-xl font-bold mb-3">{step.title}</h3>
               <p className="text-gray-500">
-                Fast processing with easy required documents and approval system.
+                {step.description}
               </p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
 
       {/* CUSTOMER FEEDBACK */}
       <div className="py-20">
         <h2 className="text-3xl font-bold text-center mb-8">What Clients Say</h2>
-        <div className="carousel rounded-box">
-          <div className="carousel-item p-5 bg-base-200 rounded-lg shadow-md">
-            ⭐⭐⭐⭐⭐ "Fast approval and no hassle!"
-          </div>
-          <div className="carousel-item p-5 bg-base-200 rounded-lg shadow-md">
-            ⭐⭐⭐⭐⭐ "Very good support and easy process!"
-          </div>
-          <div className="carousel-item p-5 bg-base-200 rounded-lg shadow-md">
-            ⭐⭐⭐⭐⭐ "Best loan service. Highly recommended!"
-          </div>
-        </div>
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-3 gap-5"
+          variants={stagger}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {testimonials.map((item) => (
+            <motion.div key={item.author} className="p-5 bg-base-200 rounded-lg shadow-md" variants={fadeUp} transition={{ duration: 0.45 }}>
+              <p className="font-medium">"{item.quote}"</p>
+              <p className="text-sm text-gray-600 mt-3">- {item.author}</p>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
 
       {/* EXTRA SECTION 1 */}
-      <div className="py-16 text-center bg-blue-50 rounded-xl my-10">
+      <div className="py-16 text-center bg-blue-50 rounded-xl my-10 border border-blue-100">
         <h2 className="text-3xl font-bold">Why Choose Us?</h2>
         <p className="max-w-xl mx-auto mt-4 text-gray-600">
-          Trusted by thousands with secure loan process and 24/7 support.
+          Trusted by thousands with transparent rates, secure processing, and dedicated support.
         </p>
       </div>
 

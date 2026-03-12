@@ -6,6 +6,8 @@ import useAuth from '../../../hooks/useAuth';
 import SocialLogin from './SocialLogin';
 import Swal from 'sweetalert2';
 
+const ADMIN_EMAIL_KEY = "microloan_admin_email";
+
 const Login = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -15,23 +17,28 @@ const Login = () => {
     
 
     const handleLogin = (data) => {
-        console.log(data)
         signInUser(data.email, data.password)
             .then((result) => {
-                console.log( result.user);
-                navigate(location?.state || '/')
+                if (!localStorage.getItem(ADMIN_EMAIL_KEY)) {
+                    localStorage.setItem(ADMIN_EMAIL_KEY, result?.user?.email || data.email);
+                }
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Login successful",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                navigate(location?.state || '/dashboard')
                 
             })
             
             .catch((error) => {
-                console.error('Error logging in:', error);
-                 Swal.fire({
-                          position: "top-end",
-                          icon: "success",
-                          title: "Login successful",
-                          showConfirmButton: false,
-                          timer: 1500
-                        });
+                Swal.fire({
+                    icon: "error",
+                    title: "Login failed",
+                    text: error.message,
+                });
             });
             
     }

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { BiLogOut, BiSun, BiMoon } from "react-icons/bi";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import useUserRole from "../hooks/useUserRole";
 import Swal from "sweetalert2";
 
 const DashboardLayout = () => {
   const { user, logOut } = useAuth();
+  const { isAdmin, role } = useUserRole();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
@@ -34,16 +36,23 @@ const DashboardLayout = () => {
       });
   };
 
-  // Sidebar links
-  const links = [
-    { name: "Overview", path: "/dashboard" },
-    { name: "Loans", path: "/loans" },
+  const adminLinks = [
+    { name: "Admin Overview", path: "/dashboard" },
     { name: "Loan Applications", path: "/dashboard/loan-applications" },
     { name: "Manage Users", path: "/dashboard/manage-users" },
+    { name: "Manage Loans", path: "/dashboard/admin-loans" },
     { name: "Add Loan", path: "/dashboard/add-loan" },
-    { name: "Profile", path: "/dashboard/profile" },
-    { name: "My Loans", path: "/dashboard/my-loans" },
+    { name: "User Profile", path: "/dashboard/profile" },
+    { name: "User Loans", path: "/dashboard/my-loans" },
   ];
+
+  const userLinks = [
+    { name: "User Overview", path: "/dashboard" },
+    { name: "My Loans", path: "/dashboard/my-loans" },
+    { name: "Profile", path: "/dashboard/profile" },
+  ];
+
+  const links = isAdmin ? adminLinks : userLinks;
 
   // Update page title dynamically
   useEffect(() => {
@@ -59,6 +68,10 @@ const DashboardLayout = () => {
         <Link to="/" className="text-xl font-semibold text-gray-900 dark:text-white">📊 Dashboard</Link>
 
         <div className="flex items-center space-x-4">
+          <span className={`hidden md:inline-flex px-3 py-1 text-xs font-medium rounded-full ${isAdmin ? "bg-blue-100 text-blue-700" : "bg-emerald-100 text-emerald-700"}`}>
+            {isAdmin ? "Admin Panel" : "User Panel"}
+          </span>
+
           {/* Theme Toggle */}
           <button
             onClick={() => setDarkMode(!darkMode)}
@@ -98,6 +111,12 @@ const DashboardLayout = () => {
             sidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
           }`}
         >
+          <div className="pb-3 border-b border-gray-700">
+            <p className="text-sm text-gray-300">Signed in as</p>
+            <p className="text-sm font-semibold truncate">{user?.email}</p>
+            <p className="text-xs text-gray-400 mt-1 uppercase tracking-wide">{role || "user"}</p>
+          </div>
+
           <nav className="space-y-3">
             {links.map((link) => (
               <Link
