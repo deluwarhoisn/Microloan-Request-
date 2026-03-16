@@ -4,15 +4,20 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import loansApi from "../../../api/Loans";
 
+const ITEMS_PER_PAGE = 6;
+
 const AllLoans = () => {
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("default");
+  const [currentPage, setCurrentPage] = useState(1);
   const [compareIds, setCompareIds] = useState([]);
   const [savedIds, setSavedIds] = useState(() => {
     const raw = localStorage.getItem("saved_loan_ids");
     return raw ? JSON.parse(raw) : [];
   });
+
+  // Reset to page 1 whenever filters change - handled inline in event handlers
 
   const {
     data: loans = [],
@@ -50,6 +55,12 @@ const AllLoans = () => {
     return filtered;
   }, [loans, searchText, selectedCategory, sortBy]);
 
+  const totalPages = Math.ceil(visibleLoans.length / ITEMS_PER_PAGE);
+  const paginatedLoans = visibleLoans.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   const compareLoans = useMemo(() => {
     return loans.filter((loan) => compareIds.includes(loan._id));
   }, [loans, compareIds]);
@@ -75,24 +86,24 @@ const AllLoans = () => {
   };
 
   return (
-    <section className="py-10 bg-gray-50">
+    <section className="py-10 bg-base-200 min-h-screen">
       <div className="max-w-7xl mx-auto px-5">
         <h1 className="text-3xl font-bold text-center mb-10">
           Available Loans
         </h1>
 
-        <div className="bg-white border rounded-xl p-4 mb-6 grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div className="bg-base-100 border border-base-300 rounded-xl p-4 mb-6 grid grid-cols-1 md:grid-cols-4 gap-3">
           <input
             type="text"
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onChange={(e) => { setSearchText(e.target.value); setCurrentPage(1); }}
             placeholder="Search by loan title"
             className="input input-bordered w-full"
           />
 
           <select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => { setSelectedCategory(e.target.value); setCurrentPage(1); }}
             className="select select-bordered w-full"
           >
             {categories.map((category) => (
@@ -104,7 +115,7 @@ const AllLoans = () => {
 
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e) => { setSortBy(e.target.value); setCurrentPage(1); }}
             className="select select-bordered w-full"
           >
             <option value="default">Sort: Default</option>
@@ -118,6 +129,7 @@ const AllLoans = () => {
               setSearchText("");
               setSelectedCategory("all");
               setSortBy("default");
+              setCurrentPage(1);
             }}
             className="btn btn-outline"
           >
@@ -159,17 +171,17 @@ const AllLoans = () => {
         )}
 
         {isLoading ? (
-          <p className="text-center text-gray-500">Loading loans...</p>
+          <p className="text-center text-base-content/60">Loading loans...</p>
         ) : isError ? (
           <p className="text-center text-red-500">Failed to load loans.</p>
         ) : visibleLoans.length === 0 ? (
-          <p className="text-center text-gray-500">No loans match your filter.</p>
+          <p className="text-center text-base-content/60">No loans match your filter.</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {visibleLoans.map((loan) => (
+            {paginatedLoans.map((loan) => (
               <div
                 key={loan._id}
-                className="border rounded-xl bg-white shadow-lg p-5 hover:shadow-2xl transition-all duration-300 hover:scale-105"
+                className="border border-base-300 rounded-xl bg-base-100 shadow-lg p-5 hover:shadow-2xl transition-all duration-300 hover:scale-105"
               >
                 <img
                   src={loan.image || "https://via.placeholder.com/300"}
@@ -178,7 +190,7 @@ const AllLoans = () => {
                 />
 
                 <h2 className="text-xl font-semibold mt-4">{loan.loanTitle || loan.title}</h2>
-                <p className="text-sm text-gray-500">{loan.category}</p>
+                <p className="text-sm text-base-content/60">{loan.category}</p>
 
                 <div className="flex justify-between items-center mt-4 text-sm font-medium">
                   <span>Interest: {loan.interest}%</span>
@@ -210,6 +222,45 @@ const AllLoans = () => {
               </div>
             ))}
           </div>
+        )}
+
+        {/* PAGINATION */}
+        {!isLoading && !isError && totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mt-10 flex-wrap">
+            <button
+              className="btn btn-sm btn-outline"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(p => p - 1)}
+            >
+              « Prev
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`btn btn-sm ${
+                  page === currentPage ? 'btn-primary' : 'btn-outline'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              className="btn btn-sm btn-outline"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(p => p + 1)}
+            >
+              Next »
+            </button>
+          </div>
+        )}
+
+        {!isLoading && !isError && visibleLoans.length > 0 && (
+          <p className="text-center text-sm text-base-content/50 mt-4">
+            Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1}–{Math.min(currentPage * ITEMS_PER_PAGE, visibleLoans.length)} of {visibleLoans.length} loans
+          </p>
         )}
       </div>
     </section>

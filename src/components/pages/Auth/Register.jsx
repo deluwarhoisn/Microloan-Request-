@@ -6,6 +6,8 @@ import { updateProfile } from 'firebase/auth';
 import Swal from 'sweetalert2';
 import { useState } from 'react';
 
+const ADMIN_EMAILS = ["babuhossen301@gmail.com"];
+
 const Register = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const { registerUser } = useAuth();
@@ -32,7 +34,7 @@ const Register = () => {
         const userInfo = {
           name: data.name,
           email: data.email,
-          role: data.role,
+          role: ADMIN_EMAILS.includes(data.email.toLowerCase()) ? "admin" : data.role,
           photo: data.photo,
         };
 

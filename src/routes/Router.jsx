@@ -14,6 +14,9 @@ import LoanApplications from "../components/pages/dashboard/Admin/LoanApplicatio
 import ManageUsers from "../components/pages/dashboard/Admin/ManageUsers";
 import AddLoan from "../components/pages/dashboard/Manager/AddLoan";
 import UpdateLoan from "../components/pages/dashboard/Manager/UpdateLoan";
+import ManageLoans from "../components/pages/dashboard/Manager/ManageLoans";
+import PendingLoans from "../components/pages/dashboard/Manager/PendingLoans";
+import ApprovedLoans from "../components/pages/dashboard/Manager/ApprovedLoans";
 import Profile from "../components/pages/dashboard/User/Profile";
 import MyLoans from "../components/pages/dashboard/User/MyLoans";
 import Checkout from "../components/pages/Payment/Checkout";
@@ -33,7 +36,7 @@ export const router = createBrowserRouter([
       { path: "loan-details/:id", element: <PrivetRoute><LoanDetails /></PrivetRoute> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
-      { path: "loan-form", element: <LoanApplication /> },
+      { path: "loan-form", element: <PrivetRoute><LoanApplication /></PrivetRoute> },
       { path: "about", element: <AboutUs /> },
       { path: "contact", element: <Contact /> },
       { path: "*", element: <PageNotFound /> }
@@ -48,6 +51,8 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <DashboardHome /> },
+
+      // Admin routes
       {
         path: "loan-applications",
         element: <RoleBasedRoute allowedRoles={["admin"]}><LoanApplications /></RoleBasedRoute>
@@ -60,29 +65,47 @@ export const router = createBrowserRouter([
         path: "admin-loans",
         element: <RoleBasedRoute allowedRoles={["admin"]}><AdminAllLoans /></RoleBasedRoute>
       },
+
+      // Admin + Manager routes
       {
         path: "add-loan",
-        element: <RoleBasedRoute allowedRoles={["admin"]}><AddLoan /></RoleBasedRoute>
+        element: <RoleBasedRoute allowedRoles={["admin", "manager"]}><AddLoan /></RoleBasedRoute>
       },
       {
         path: "update-loan/:id",
-        element: <RoleBasedRoute allowedRoles={["user"]}><UpdateLoan /></RoleBasedRoute>
+        element: <RoleBasedRoute allowedRoles={["admin", "manager"]}><UpdateLoan /></RoleBasedRoute>
       },
       {
         path: "edit-loan/:id",
-        element: <RoleBasedRoute allowedRoles={["user"]}><UpdateLoan /></RoleBasedRoute>
+        element: <RoleBasedRoute allowedRoles={["admin", "manager"]}><UpdateLoan /></RoleBasedRoute>
+      },
+
+      // Manager routes
+      {
+        path: "manage-loans",
+        element: <RoleBasedRoute allowedRoles={["admin", "manager"]}><ManageLoans /></RoleBasedRoute>
       },
       {
+        path: "pending-loans",
+        element: <RoleBasedRoute allowedRoles={["admin", "manager"]}><PendingLoans /></RoleBasedRoute>
+      },
+      {
+        path: "approved-loans",
+        element: <RoleBasedRoute allowedRoles={["admin", "manager"]}><ApprovedLoans /></RoleBasedRoute>
+      },
+
+      // Borrower routes
+      {
         path: "profile",
-        element: <RoleBasedRoute allowedRoles={["user"]}><Profile /></RoleBasedRoute>
+        element: <PrivetRoute><Profile /></PrivetRoute>
       },
       {
         path: "my-loans",
-        element: <RoleBasedRoute allowedRoles={["user"]}><MyLoans /></RoleBasedRoute>
+        element: <RoleBasedRoute allowedRoles={["borrower", "user"]}><MyLoans /></RoleBasedRoute>
       },
       {
         path: "checkout/:loanId",
-        element: <RoleBasedRoute allowedRoles={["user"]}><Checkout /></RoleBasedRoute>
+        element: <RoleBasedRoute allowedRoles={["borrower", "user"]}><Checkout /></RoleBasedRoute>
       }
     ]
   }

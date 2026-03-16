@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import loansApi from "../../../api/Loans";
 import img from "../../../assets/images (1).png";
+import Testimonials from "./Testimonials";
 
 const processSteps = [
   {
@@ -16,21 +17,6 @@ const processSteps = [
   {
     title: "Receive Funds",
     description: "Once approved, funds are disbursed through your selected payment channel.",
-  },
-];
-
-const testimonials = [
-  {
-    quote: "Fast approval and no hassle.",
-    author: "Nusrat, Small Business Owner",
-  },
-  {
-    quote: "Clean process and very supportive team.",
-    author: "Rafi, Freelancer",
-  },
-  {
-    quote: "One of the easiest loan experiences I have had.",
-    author: "Sadia, Entrepreneur",
   },
 ];
 
@@ -209,24 +195,8 @@ const Home = () => {
         </motion.div>
       </div>
 
-      {/* CUSTOMER FEEDBACK */}
-      <div className="py-20">
-        <h2 className="text-3xl font-bold text-center mb-8">What Clients Say</h2>
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-5"
-          variants={stagger}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-        >
-          {testimonials.map((item) => (
-            <motion.div key={item.author} className="p-5 bg-base-200 rounded-lg shadow-md" variants={fadeUp} transition={{ duration: 0.45 }}>
-              <p className="font-medium">"{item.quote}"</p>
-              <p className="text-sm text-gray-600 mt-3">- {item.author}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
+      {/* CUSTOMER REVIEWS - Rating System */}
+      <Testimonials />
 
       {/* EXTRA SECTION 1 */}
       <div className="py-16 text-center bg-blue-50 rounded-xl my-10 border border-blue-100">

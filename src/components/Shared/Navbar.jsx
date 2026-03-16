@@ -1,23 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom'; // ✅ FIXED
+import React from 'react';
+import { Link, NavLink } from 'react-router-dom';
 import { FiLogIn } from 'react-icons/fi';
 import { FaUserCircle } from 'react-icons/fa';
 import useAuth from '../../hooks/useAuth';
 import Logo from './Logo';
+import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-
-  // Apply theme on load
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  const handleThemeToggle = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
 
   const handleLogOut = () => {
     logOut().catch(err => console.log(err));
@@ -97,12 +87,7 @@ const Navbar = () => {
         )}
 
         {/* Theme Toggle */}
-        <button
-          className="btn btn-ghost btn-sm text-xl"
-          onClick={handleThemeToggle}
-        >
-          {theme === "light" ? "🌙" : "☀️"}
-        </button>
+        <ThemeToggle />
       </div>
 
     </div>

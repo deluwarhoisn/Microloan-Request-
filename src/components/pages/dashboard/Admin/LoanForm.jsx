@@ -1,11 +1,20 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import Swal from "sweetalert2";
+import Confetti from "react-confetti";
+import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../../../hooks/useAuth";
 
-const LoanForm = ({ selectedLoan }) => {
+const LoanForm = () => {
     const { user } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
     const userEmail = user?.email || "";
+
+    // Accept loan data from router state (passed from LoanDetails "Apply Now")
+    const selectedLoan = location.state?.loan || null;
+
+    const [showConfetti, setShowConfetti] = useState(false);
 
     const { register, handleSubmit, reset } = useForm();
     const [loading, setLoading] = useState(false);
@@ -17,13 +26,14 @@ const LoanForm = ({ selectedLoan }) => {
 
         const finalData = {
             ...data,
-            ...defaultValues,
+            status: "Pending",
+            applicationFeeStatus: "Unpaid",
             name: fullName,
             amount: data.loanAmount,
             additionalInfo: data.extraNotes || data.reason || "",
             loanId: selectedLoan?._id || "",
             category: selectedLoan?.category || data.category || "General",
-            loanTitle: selectedLoan?.loanTitle,
+            loanTitle: selectedLoan?.loanTitle || selectedLoan?.title || "",
             interestRate: selectedLoan?.interest,
             email: userEmail,
             createdAt: new Date().toISOString(),
@@ -32,77 +42,90 @@ const LoanForm = ({ selectedLoan }) => {
 
         setLoading(true);
 
-        try {
-            const res = await fetch("https://microloan-request-server.vercel.app/loan-application", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(finalData),
-            });
+        // Try multiple endpoint patterns
+        const endpoints = [
+            "https://microloan-request-server.vercel.app/loan-application",
+            "https://microloan-request-server.vercel.app/loan-applications",
+        ];
 
-            const result = await res.json();
-
-            if (result.success) {
-                Swal.fire({
-                    title: "Application Submitted!",
-                    text: "Your loan application has been submitted successfully.",
-                    icon: "success",
-                    confirmButtonText: "OK"
+        let submitted = false;
+        for (const url of endpoints) {
+            try {
+                const res = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(finalData),
                 });
-                reset(); // Clear form
-            } else {
-                Swal.fire({
-                    title: "Error!",
-                    text: result.message,
-                    icon: "error",
-                    confirmButtonText: "OK"
-                });
-            }
-        } catch (error) {
-            Swal.fire({
-                title: "Error!",
-                text: error.message,
-                icon: "error",
-                confirmButtonText: "OK"
-            });
+                const result = await res.json();
+                if (result.insertedId || result.success || result.acknowledged) {
+                    submitted = true;
+                    break;
+                }
+            } catch { /* try next */ }
         }
 
         setLoading(false);
+
+        if (submitted) {
+            setShowConfetti(true);
+            setTimeout(() => setShowConfetti(false), 5000);
+            Swal.fire({
+                title: "Application Submitted! 🎉",
+                text: "Your loan application has been submitted successfully. Check your dashboard.",
+                icon: "success",
+                confirmButtonText: "View My Loans",
+            }).then(() => navigate("/dashboard/my-loans"));
+            reset();
+        } else {
+            Swal.fire({
+                title: "Submission Failed",
+                text: "Could not submit your application. Please try again.",
+                icon: "error",
+            });
+        }
     };
 
     return (
-        <div className="max-w-3xl mx-auto bg-white shadow-lg p-10 rounded-xl mt-10">
+        <div className="max-w-3xl mx-auto bg-base-100 shadow-lg p-10 rounded-xl mt-10 mb-10">
+            {showConfetti && <Confetti recycle={false} numberOfPieces={400} />}
             <h2 className="text-3xl font-bold text-center mb-8">Loan Application Form</h2>
+
+            {!selectedLoan && (
+                <div className="alert alert-warning mb-6 text-sm">
+                    No loan selected. Please go to <a href="/loans" className="underline font-medium">All Loans</a> and click "View Details" → "Apply Now".
+                </div>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
 
                 {/* Auto-Filled Fields */}
-                <div className="bg-gray-100 p-4 rounded-lg">
+                <div className="bg-base-200 p-4 rounded-lg">
                     <h3 className="font-semibold text-lg mb-3">Loan Information (Read Only)</h3>
-                    <input readOnly value={userEmail} className="w-full p-3 border rounded mb-3 bg-gray-200" />
-                    <input readOnly value={selectedLoan?.loanTitle} className="w-full p-3 border rounded mb-3 bg-gray-200" />
-                    <input readOnly value={`${selectedLoan?.interest}% Interest Rate`} className="w-full p-3 border rounded bg-gray-200" />
+                    <input readOnly value={userEmail} className="w-full p-3 border rounded mb-3 bg-base-300 text-base-content" />
+                    <input readOnly value={selectedLoan?.loanTitle || selectedLoan?.title || "N/A"} placeholder="Loan Title" className="w-full p-3 border rounded mb-3 bg-base-300 text-base-content" />
+                    <input readOnly value={selectedLoan?.interest ? `${selectedLoan.interest}% Interest Rate` : "N/A"} className="w-full p-3 border rounded bg-base-300 text-base-content" />
                 </div>
 
                 {/* User Input Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <input {...register("firstName")} placeholder="First Name" required className="input" />
-                    <input {...register("lastName")} placeholder="Last Name" required className="input" />
-                </div>
-                <input {...register("contactNumber")} placeholder="Contact Number" required className="input" />
-                <input {...register("nationalID")} placeholder="National ID / Passport Number" required className="input" />
-                <input {...register("incomeSource")} placeholder="Income Source" required className="input" />
-                <input {...register("monthlyIncome")} type="number" placeholder="Monthly Income" required className="input" />
-                <input {...register("loanAmount")} type="number" placeholder="Requested Loan Amount" required className="input" />
-                <textarea {...register("reason")} placeholder="Reason for Loan" rows={3} className="input"></textarea>
-                <textarea {...register("address")} placeholder="Address" rows={2} className="input"></textarea>
-                <textarea {...register("extraNotes")} placeholder="Additional Notes (optional)" rows={3} className="input"></textarea>
+                    <input {...register("firstName", { required: true })} placeholder="First Name *" className="input input-bordered w-full" />
+                        <input {...register("lastName", { required: true })} placeholder="Last Name *" className="input input-bordered w-full" />
+                    </div>
+                    <input {...register("contactNumber", { required: true })} placeholder="Contact Number *" className="input input-bordered w-full" />
+                    <input {...register("nationalID", { required: true })} placeholder="National ID / Passport Number *" className="input input-bordered w-full" />
+                    <input {...register("incomeSource", { required: true })} placeholder="Income Source *" className="input input-bordered w-full" />
+                    <input {...register("monthlyIncome", { required: true })} type="number" placeholder="Monthly Income ($) *" className="input input-bordered w-full" />
+                    <input {...register("loanAmount", { required: true })} type="number" placeholder="Requested Loan Amount ($) *" className="input input-bordered w-full" />
+                    <textarea {...register("reason", { required: true })} placeholder="Reason for Loan *" rows={3} className="textarea textarea-bordered w-full"></textarea>
+                    <textarea {...register("address", { required: true })} placeholder="Address *" rows={2} className="textarea textarea-bordered w-full"></textarea>
+                    <textarea {...register("extraNotes")} placeholder="Additional Notes (optional)" rows={3} className="textarea textarea-bordered w-full"></textarea>
 
                 {/* Hidden Fields */}
                 <input type="hidden" value="Pending" {...register("status")} />
                 <input type="hidden" value="Unpaid" {...register("applicationFeeStatus")} />
 
-                <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg text-lg font-semibold transition">
-                    {loading ? "Submitting..." : "Submit Application"}
+                <button type="submit" disabled={loading} className="btn btn-primary w-full text-base">
+                    {loading ? "Submitting..." : "🚀 Submit Application"}
                 </button>
             </form>
         </div>

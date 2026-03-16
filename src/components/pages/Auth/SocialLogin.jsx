@@ -3,6 +3,7 @@ import useAuth from '../../../hooks/useAuth';
 import { useLocation, useNavigate } from 'react-router';
 
 const ADMIN_EMAIL_KEY = "microloan_admin_email";
+const ADMIN_EMAILS = ["babuhossen301@gmail.com"];
 
 const SocialLogin = () => {
 
@@ -14,7 +15,10 @@ const navigate = useNavigate();
 const handleGoogleSignIn = () =>{
  signInGoogle()
  .then((result) =>{
-        if (!localStorage.getItem(ADMIN_EMAIL_KEY)) {
+        const email = (result?.user?.email || "").toLowerCase();
+        if (ADMIN_EMAILS.includes(email)) {
+            localStorage.setItem(ADMIN_EMAIL_KEY, email);
+        } else if (!localStorage.getItem(ADMIN_EMAIL_KEY)) {
             localStorage.setItem(ADMIN_EMAIL_KEY, result?.user?.email || "");
         }
      navigate(location.state || '/dashboard')

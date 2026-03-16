@@ -7,6 +7,7 @@ import SocialLogin from './SocialLogin';
 import Swal from 'sweetalert2';
 
 const ADMIN_EMAIL_KEY = "microloan_admin_email";
+const ADMIN_EMAILS = ["babuhossen301@gmail.com"];
 
 const Login = () => {
 
@@ -19,7 +20,10 @@ const Login = () => {
     const handleLogin = (data) => {
         signInUser(data.email, data.password)
             .then((result) => {
-                if (!localStorage.getItem(ADMIN_EMAIL_KEY)) {
+                const email = (result?.user?.email || data.email || "").toLowerCase();
+                if (ADMIN_EMAILS.includes(email)) {
+                    localStorage.setItem(ADMIN_EMAIL_KEY, email);
+                } else if (!localStorage.getItem(ADMIN_EMAIL_KEY)) {
                     localStorage.setItem(ADMIN_EMAIL_KEY, result?.user?.email || data.email);
                 }
                 Swal.fire({
