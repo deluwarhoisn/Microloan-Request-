@@ -56,6 +56,25 @@ This repository was upgraded with 3 new features, new technology integration, R&
 Detailed research notes are available here:
 - [docs/R_AND_D.md](docs/R_AND_D.md)
 
+## Test Accounts
+
+### Admin
+- **Email**: `babuhossen301@gmail.co` (or `babuhossen301@gmail.com`)
+- **Status**: Active
+
+### Manager
+- **Email**: `tagyl@mailinator.com` | Status: Active
+- **Email**: `jynix@mailinator.com` | Status: Active
+- **Email**: `hobe@mailinator.com` | Status: Active
+
+### User (Borrower)
+- **Email**: `tuvynyw@mailinator.com` | Status: Active
+
+### How to Login
+1. **Google Login** (Recommended): Click "Login with Google" to sign in with any Google account
+2. **Email/Password**: Use the email addresses above (passwords managed by Firebase during registration)
+3. **Create New Test Account**: Register with "Register" page, then use ManageUsers panel to change role
+
 ## Local Setup
 ```bash
 npm install
