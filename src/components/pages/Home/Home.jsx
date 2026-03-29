@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion as Motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import loansApi from "../../../api/Loans";
 import img from "../../../assets/images (1).png";
@@ -19,6 +19,13 @@ const processSteps = [
     description: "Once approved, funds are disbursed through your selected payment channel.",
   },
 ];
+
+const developerProfile = {
+  name: "Deluwar Hosin",
+  role: "Frontend and Backend Developer",
+  summary:
+    "Designs intuitive user interfaces and develops robust backend services to deliver a smooth and secure lending experience.",
+};
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -58,13 +65,13 @@ const Home = () => {
     <div className="max-w-7xl mx-auto px-5">
 
       {/* HERO SECTION */}
-      <motion.div
+      <Motion.div
         className="flex flex-col lg:flex-row items-center gap-10 py-20"
         variants={stagger}
         initial="hidden"
         animate="show"
       >
-        <motion.div className="flex-1" variants={fadeUp} transition={{ duration: 0.55 }}>
+        <Motion.div className="flex-1" variants={fadeUp} transition={{ duration: 0.55 }}>
           <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
             Get Funding Fast, Easy & Secure.
           </h1>
@@ -98,16 +105,16 @@ const Home = () => {
               Explore Loans
             </button>
           </div>
-        </motion.div>
+        </Motion.div>
 
-        <motion.img
+        <Motion.img
           src={img}
           alt="loan"
           className="rounded-lg shadow-xl flex-1 max-h-[440px] object-cover"
           variants={fadeUp}
           transition={{ duration: 0.6, delay: 0.1 }}
         />
-      </motion.div>
+      </Motion.div>
 
       {/* AVAILABLE LOANS */}
       <h2 className="text-3xl font-bold text-center mb-8">Popular Loan Options</h2>
@@ -119,7 +126,7 @@ const Home = () => {
       ) : loans.length === 0 ? (
         <p className="text-center text-gray-500">No loan data found.</p>
       ) : (
-        <motion.div
+        <Motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           variants={stagger}
           initial="hidden"
@@ -127,7 +134,7 @@ const Home = () => {
           viewport={{ once: true, amount: 0.2 }}
         >
           {loans.map((loan, index) => (
-            <motion.div
+            <Motion.div
               key={loan._id}
               className="border rounded-xl p-5 shadow-lg hover:shadow-xl transition-all bg-base-100"
               variants={fadeUp}
@@ -163,16 +170,16 @@ const Home = () => {
               >
                 View Details
               </Link>
-            </motion.div>
+            </Motion.div>
           ))}
-        </motion.div>
+        </Motion.div>
       )}
 
       {/* HOW IT WORKS */}
       <div className="py-20 text-center">
         <h2 className="text-3xl font-bold mb-10">How It Works</h2>
 
-        <motion.div
+        <Motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-10"
           variants={stagger}
           initial="hidden"
@@ -180,7 +187,7 @@ const Home = () => {
           viewport={{ once: true, amount: 0.2 }}
         >
           {processSteps.map((step, index) => (
-            <motion.div
+            <Motion.div
               key={step.title}
               className="p-6 border rounded-xl shadow-md bg-base-100"
               variants={fadeUp}
@@ -190,9 +197,9 @@ const Home = () => {
               <p className="text-gray-500">
                 {step.description}
               </p>
-            </motion.div>
+            </Motion.div>
           ))}
-        </motion.div>
+        </Motion.div>
       </div>
 
       {/* CUSTOMER REVIEWS - Rating System */}
@@ -205,6 +212,47 @@ const Home = () => {
           Trusted by thousands with transparent rates, secure processing, and dedicated support.
         </p>
       </div>
+
+      {/* DEVELOPER CARD */}
+      <Motion.div
+        className="my-12 bg-gradient-to-br from-white to-slate-100 border border-slate-200 rounded-3xl p-10 shadow-md"
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6 }}
+      >
+        <h2 className="text-3xl font-bold text-center text-slate-800">
+          👨‍💻 Developer
+        </h2>
+
+        <div className="max-w-2xl mx-auto mt-8 bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm hover:shadow-lg transition-all duration-300">
+
+          {/* Avatar */}
+          <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white text-3xl font-bold shadow-md">
+            {developerProfile.name.charAt(0)}
+          </div>
+
+          {/* Name */}
+          <p className="text-2xl font-semibold text-slate-900 mt-4">
+            {developerProfile.name}
+          </p>
+
+          {/* Role */}
+          <p className="text-blue-600 font-medium mt-1 tracking-wide">
+            {developerProfile.role}
+          </p>
+
+          {/* Divider */}
+          <div className="w-16 h-1 bg-blue-500 mx-auto my-4 rounded-full"></div>
+
+          {/* Summary */}
+          <p className="text-gray-600 text-sm leading-relaxed">
+            {developerProfile.summary}
+          </p>
+
+        </div>
+      </Motion.div>
 
       {/* EXTRA SECTION 2 - CTA */}
       <div className="py-20 text-center">

@@ -28,6 +28,13 @@ const milestones = [
   { year: '2026', label: 'Data-Driven Dashboard Upgrade' },
 ];
 
+const developerProfile = {
+  name: 'Deluwar Hosin',
+  role: 'Frontend and Backend Developer',
+  summary:
+    'Builds responsive, user-focused interfaces and reliable server-side features to keep LoanLink fast, scalable, and secure.',
+};
+
 const AboutUs = () => {
   return (
     <section className="max-w-7xl mx-auto px-5 py-16 space-y-12">
@@ -98,6 +105,21 @@ const AboutUs = () => {
               <p className="font-semibold mt-1">{item.label}</p>
             </div>
           ))}
+        </div>
+      </motion.div>
+
+      <motion.div
+        className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm"
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h3 className="text-2xl font-bold text-center mb-6">Developer</h3>
+        <div className="max-w-2xl mx-auto bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
+          <p className="text-2xl font-semibold text-slate-900">{developerProfile.name}</p>
+          <p className="text-blue-700 font-medium mt-1">{developerProfile.role}</p>
+          <p className="text-gray-600 mt-3">{developerProfile.summary}</p>
         </div>
       </motion.div>
 
